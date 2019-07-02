@@ -1,13 +1,23 @@
 DOCKER?=docker
-VERSION?=dev
-TAG?=flimberger/apt-proxy-container:${VERSION}
+CONTAINER?=apt-proxy
+TAG?=0.1
+HUBUSER?=flimberger
 CACHEVOL?=apt-proxy-cache
 LOGVOL?=apt-proxy-logs
 PROXYADDR?=127.0.0.1
 
+REPO=${HUBUSER}/${CONTAINER}
+
 build:
-	${DOCKER} build -t ${TAG} .
+	${DOCKER} build -t ${CONTAINER}:${TAG} .
 .PHONY: build
+
+upload:
+	${DOCKER} tag ${CONTAINER}:${TAG} ${REPO}:${TAG}
+	${DOCKER} tag ${REPO}:${TAG} ${REPO}:latest
+	${DOCKER} push ${REPO}:${TAG}
+	${DOCKER} push ${REPO}:latest
+.PHONY: upload
 
 shell:
 	${DOCKER} run\
